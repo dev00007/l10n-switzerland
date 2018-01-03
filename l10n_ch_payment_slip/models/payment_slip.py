@@ -450,7 +450,7 @@ class PaymentSlip(models.Model):
         # use onchange to define our own temporary address format
         with self.env.do_in_onchange():
             # assign a fake country in case partner has no country set
-            com_partner.country_id = self.env['res.country'].new(
+            com_partner.country_id = self.env['res.country'].sudo().new(
                 {'address_format': bvr_address_format}
             )
             address_lines = com_partner._display_address(
@@ -887,6 +887,11 @@ class PaymentSlip(models.Model):
                                         (3.4 * inch, 2.35 * inch),
                                         default_font,
                                         bank_acc.get_account_number())
+
+            if print_settings.bvr_header_partner_address:
+                self._draw_address(canvas, print_settings,
+                                   (4.9 * inch, 9.0 * inch),
+                                   default_font, com_partner)
 
             self._draw_ref(canvas,
                            print_settings,
